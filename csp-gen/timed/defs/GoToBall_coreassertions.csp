@@ -1,0 +1,41 @@
+
+--
+-- RoboChart generator version 3.0.0.202206212138
+-- Automatically generated on 18-11-2022 19:10:52
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "core_timed_defs.csp"
+include "file_main_defs.csp"
+include "core_defs.csp"
+include "state_timed_defs.csp"
+include "GoToBall.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate GoToBall
+P_GoToBall = let
+	id__ = 0
+	
+	
+	
+within
+	GoToBall::O__(
+		id__,
+		const_GoToBall_DOCK_DIST_THRESHOLD,
+		const_GoToBall_TIME_TO_APPROACH_BALL,
+		const_GoToBall_FULL_ROTATION
+	)
+assert P_GoToBall :[deadlock-free]	
+assert P_GoToBall;RUN({r__}) :[deadlock-free]
+assert P_GoToBall :[deterministic]
+assert P_GoToBall :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_GoToBall[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_GoToBall

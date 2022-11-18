@@ -1,0 +1,32 @@
+
+--
+-- RoboChart generator version 3.0.0.202206212138
+-- Automatically generated on 18-11-2022 19:10:52
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+-- data definitions used by platform:/resource/ExampleGoToBall/main.rct
+nametype Position = ({(x0__,x1__,x2__) | x0__ <- core_real,x1__ <- core_real,x2__ <- core_real})
+Position_pos((pos)) = pos
+update_Position_pos((pos),v__) = (v__)
+nametype Ball = (Position)
+Ball_pos((pos)) = pos
+update_Ball_pos((pos),v__) = (v__)
+nametype Robot = (Position)
+Robot_pos((pos)) = pos
+update_Robot_pos((pos),v__) = (v__)
+nametype Goal = (Position)
+Goal_pos((pos)) = pos
+update_Goal_pos((pos),v__) = (v__)
+nametype RawFrame = (core_real)
+RawFrame_img((img)) = img
+update_RawFrame_img((img),v__) = (v__)
+nametype ProcessedFrame = ({(x0__,x1__,x2__) | x0__ <- Ball,x1__ <- Robot,x2__ <- Goal})
+ProcessedFrame_objects((objects)) = objects
+update_ProcessedFrame_objects((objects),v__) = (v__)
+
+pre_dist(param_p1,param_p2) = true
+pre_process(param_src) = true
+	

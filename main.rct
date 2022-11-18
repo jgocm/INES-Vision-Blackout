@@ -1,0 +1,159 @@
+module Blackout {
+	robotic platform BlackoutRobot {
+		
+	uses IFrame uses IBallSensor uses ICamera provides IMove }
+	
+	controller GoToBallController {
+		sref stm_ref0 = GoToBall
+		uses IFrame uses IBallSensor requires IMove connection GoToBallController on ballUpdate to stm_ref0 on ballUpdate
+		connection GoToBallController on ballOnSensor to stm_ref0 on ballOnSensor
+		}
+
+	controller VisionController {
+		sref stm_ref0 = VisionUpdate
+		uses ICamera
+	}
+
+}
+
+// DEFINE DATATYPES:
+datatype Position {
+	pos: real*real*real
+} 
+
+datatype Ball {
+	pos: Position
+}
+
+datatype Robot {
+	pos: Position
+}
+
+datatype Goal {
+	pos: Position
+}
+
+datatype RawFrame {
+	img: real
+}
+
+datatype ProcessedFrame {
+	objects: Ball*Robot*Goal
+}
+
+
+// DEFINE INTERFACES
+interface ICamera {
+	event capRead: RawFrame
+}
+
+interface IMove {
+	goToPoint(p:Position)
+	rotateOnSelf(p:Position)
+	rotateInPoint(p:Position)
+	stop()
+}
+
+interface IFrame {
+	event ballUpdate : Position
+}
+
+interface IBallSensor {
+	event ballOnSensor
+}
+
+
+
+stm GoToBall {
+	
+	const DOCK_DIST_THRESHOLD: nat
+	const TIME_TO_APPROACH_BALL: nat
+	const FULL_ROTATION: Position
+	var distance: real
+	var ballPosition: Position
+	var hasBallContact: boolean
+	var hasBallUpdate: Position
+	
+	
+	initial i
+	final f
+	state SearchBall {
+		entry rotateOnSelf (FULL_ROTATION);wait(1)
+	}
+
+	transition t0 {
+		from i
+		to SearchBall
+	}
+	requires IMove 
+	uses IFrame state DriveToBall {
+		entry   distance = dist (hasBallUpdate, hasBallUpdate)
+		 ; goToPoint (ballPosition) ; wait ( 1 )
+	}
+	
+	transition t1 {
+		from SearchBall
+		to DriveToBall
+		trigger ballUpdate?hasBallUpdate
+	}
+
+	state DockBall {
+		entry goToPoint (ballPosition)
+	}
+	uses IBallSensor transition t2 {
+		from DriveToBall
+		to DockBall 
+		condition distance < DOCK_DIST_THRESHOLD 
+	}
+	transition t3 {
+		from DockBall
+		to f
+		trigger ballOnSensor
+		action stop ( )
+	}	
+	
+	transition t4 {
+		from DockBall
+		to SearchBall
+		condition sinceEntry(DockBall) > TIME_TO_APPROACH_BALL
+	}
+transition t5 {
+		from DriveToBall
+		to DriveToBall
+		trigger ballUpdate ? hasBallUpdate
+	}
+}
+
+stm VisionUpdate {
+
+	const VISION_PROCESSING_TIME: nat
+	var newFrame: RawFrame
+	var processedFrame: ProcessedFrame
+	uses ICamera 
+		
+	initial i
+	state waitFrame {
+	}
+	state processFrame {
+		entry   processedFrame = process (newFrame); wait ( 1 )
+	}
+	transition t0 {
+		from i
+		to waitFrame
+	}	
+	transition t1 {
+		from waitFrame
+		to processFrame
+		trigger capRead ? newFrame
+	}
+	transition t2 {
+		from processFrame
+		to waitFrame
+		condition sinceEntry(processFrame) > VISION_PROCESSING_TIME
+	}
+}
+
+function dist ( p1 : Position , p2 : Position ) : real { }
+
+function process ( src: RawFrame ) : ProcessedFrame { }
+

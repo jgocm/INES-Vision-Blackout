@@ -1,0 +1,61 @@
+
+--
+-- RoboChart generator version 3.0.0.202206212138
+-- Automatically generated on 18-11-2022 19:10:52
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "core_timed_defs.csp"
+include "file_main_defs.csp"
+include "core_defs.csp"
+include "state_timed_defs.csp"
+include "robochart_defs.csp"
+include "Blackout_VisionController.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate Blackout_VisionController
+P_Blackout_VisionController = let
+	id__ = 0
+	
+	
+	
+	const_Blackout_VisionController_stm_ref0_VISION_PROCESSING_TIME = const_VisionUpdate_VISION_PROCESSING_TIME
+		
+within
+	Blackout_VisionController::O__(id__,
+			    const_Blackout_VisionController_stm_ref0_VISION_PROCESSING_TIME)
+
+assert P_Blackout_VisionController :[deadlock-free]	
+assert P_Blackout_VisionController;RUN({r__}) :[deadlock-free]
+assert P_Blackout_VisionController :[deterministic]
+assert P_Blackout_VisionController :[divergence-free]
+
+-- generate Blackout_VisionController_stm_ref0
+P_Blackout_VisionController_stm_ref0 = let
+	id__ = 0
+	
+	
+	
+within
+	Blackout_VisionController::stm_ref0::O__(
+		id__,
+		const_VisionUpdate_VISION_PROCESSING_TIME
+	)
+assert P_Blackout_VisionController_stm_ref0 :[deadlock-free]	
+assert P_Blackout_VisionController_stm_ref0;RUN({r__}) :[deadlock-free]
+assert P_Blackout_VisionController_stm_ref0 :[deterministic]
+assert P_Blackout_VisionController_stm_ref0 :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_Blackout_VisionController_stm_ref0[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_Blackout_VisionController_stm_ref0
+-- timed deadlock free
+assert prioritise(P_Blackout_VisionController[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_Blackout_VisionController
