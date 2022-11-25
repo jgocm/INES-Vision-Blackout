@@ -24,7 +24,9 @@ Finite State Machine outputs:
 
 ![blackout2023](https://user-images.githubusercontent.com/85940536/204012984-0692724d-237b-412b-bdeb-6284ca50c50a.png)
 
-## Code Source
+## Source Code
+Currently, the project is under minor refactors, due to ongoing researches on robot self-localization. So, ball grabbing is the only working skill on the current master branch.
+
 SSL Vision Blackout source code: https://github.com/jgocm/ssl-detector
 
 Current main code is located at: https://github.com/jgocm/ssl-detector/blob/master/src/stage1_refactor.py
