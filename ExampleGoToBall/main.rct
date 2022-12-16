@@ -7,13 +7,20 @@ module Blackout {
 		sref stm_ref0 = GoToBall
 		uses IFrame uses IBallSensor requires IMove connection GoToBallController on ballUpdate to stm_ref0 on ballUpdate
 		connection GoToBallController on ballOnSensor to stm_ref0 on ballOnSensor
-		}
+		connection stm_ref0 on requestFrame to GoToBallController on requestFrame
+	}
 
 	controller VisionController {
 		sref stm_ref0 = VisionUpdate
 		uses ICamera
+	uses IFrame connection stm_ref0 on ballUpdate to VisionController on ballUpdate
+	connection VisionController on capRead to stm_ref0 on capRead
 	}
 
+	connection VisionController on ballUpdate to GoToBallController on ballUpdate
+connection BlackoutRobot on capRead to VisionController on capRead ( _async )
+connection GoToBallController on requestFrame to BlackoutRobot on requestFrame ( _async )
+	connection BlackoutRobot on ballOnSensor to GoToBallController on ballOnSensor ( _async )
 }
 
 // DEFINE DATATYPES:
@@ -55,7 +62,8 @@ interface IMove {
 }
 
 interface IFrame {
-	event ballUpdate : Position
+	event ballUpdate : Ball
+event requestFrame
 }
 
 interface IBallSensor {
@@ -72,13 +80,13 @@ stm GoToBall {
 	var distance: real
 	var ballPosition: Position
 	var hasBallContact: boolean
-	var hasBallUpdate: Position
+	var hasBallUpdate: Ball
 	
 	
 	initial i
 	final f
 	state SearchBall {
-		entry rotateOnSelf (FULL_ROTATION);wait(1)
+		entry rotateOnSelf (FULL_ROTATION); requestFrame
 	}
 
 	transition t0 {
@@ -87,8 +95,8 @@ stm GoToBall {
 	}
 	requires IMove 
 	uses IFrame state DriveToBall {
-		entry   distance = dist (hasBallUpdate, hasBallUpdate)
-		 ; goToPoint (ballPosition) ; wait ( 1 )
+		entry   distance = dist (hasBallUpdate[0], hasBallUpdate[0])
+		 ; goToPoint (ballPosition) ; requestFrame
 	}
 	
 	transition t1 {
@@ -130,12 +138,13 @@ stm VisionUpdate {
 	var newFrame: RawFrame
 	var processedFrame: ProcessedFrame
 	uses ICamera 
+	var resB :Position
 		
 	initial i
 	state waitFrame {
 	}
 	state processFrame {
-		entry   processedFrame = process (newFrame); wait ( 1 )
+		entry   processedFrame = process (newFrame); wait ( VISION_PROCESSING_TIME );ballUpdate!resBallUpdate
 	}
 	transition t0 {
 		from i
@@ -149,8 +158,9 @@ stm VisionUpdate {
 	transition t2 {
 		from processFrame
 		to waitFrame
-		condition sinceEntry(processFrame) > VISION_PROCESSING_TIME
+		//condition sinceEntry(processFrame) > VISION_PROCESSING_TIME
 	}
+uses IFrame var resBallUpdate : Ball
 }
 
 function dist ( p1 : Position , p2 : Position ) : real { }
