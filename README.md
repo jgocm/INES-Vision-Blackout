@@ -5,8 +5,11 @@ Modeling Finite State Machines for solving autonomous robotics navigation challe
 1. Run eclipse
 2. Set your workspace directory to INES-Vision-Blackout/workspace and Launch
 ![image](https://user-images.githubusercontent.com/85940536/202816339-48849ccb-68a8-4b24-84b7-ff695e17de76.png)
-3. Eclipse project should look as follows:
-![image](https://user-images.githubusercontent.com/85940536/202816655-a375d54b-ac2f-4a1a-a9a8-233e1d11f377.png)
+3. Import project into workspace folder:
+
+![image](https://user-images.githubusercontent.com/85940536/208133009-bf68d74d-4997-40c6-8ca3-3ff4e066a477.png)
+![image](https://user-images.githubusercontent.com/85940536/208133244-4da26746-7bfd-4934-a262-aba90616d7d1.png)
+![image](https://user-images.githubusercontent.com/85940536/208133888-b0c36932-49da-494b-9280-778543f18c84.png)
 
 ## Vision Blackout base structure
 Finite State Machine inputs:
